@@ -15,7 +15,7 @@
  */
 
 var NodeOAuthServer = require('oauth2-server');
-var thenify = require('thenify');
+var Promise = require('bluebird');
 
 module.exports = OAuthServer;
 
@@ -42,19 +42,19 @@ function OAuthServer (config) {
 OAuthServer.prototype.authorise = function () {
 
   var self = this;
-  var expressAuthorise = thenify(this.server.authorise());
+  var expressAuthorise = Promise.promisify(this.server.authorise());
 
-  return function *authorise(next) {
+
+  return function authorise(ctx, next) {
     try {
-      yield expressAuthorise(this.request, this.response);
+      return expressAuthorise(ctx.request, ctx.response)
+        .then(next);
     } catch (err) {
       if (self.server.passthroughErrors)
-        throw err;
+        return Promise.reject(err);
 
-      return handleError(err, self.server, this);
+      return handleError(err, self.server, ctx);
     }
-
-    yield *next;
   };
 };
 
@@ -69,24 +69,23 @@ OAuthServer.prototype.authorise = function () {
 OAuthServer.prototype.grant = function () {
 
   var self = this;
-  var expressGrant = thenify(this.server.grant());
+  var expressGrant = Promise.promisify(this.server.grant());
 
-  return function *grant(next) {
+  return function (ctx, next) {
     // Mock the jsonp method
-    this.response.jsonp = function (body) {
-      this.body = body;
+    ctx.response.jsonp = function (body) {
+      ctx.body = body;
     };
 
     try {
-      yield expressGrant(this.request, this.response);
+      return expressGrant(ctx.request, ctx.response)
+        .then(next);
     } catch (err) {
       if (self.server.passthroughErrors)
-        throw err;
+        return Promise.reject(err);
 
-      return handleError(err, self.server, this);
+      return handleError(err, self.server, ctx);
     }
-
-    yield *next;
   };
 };
 
