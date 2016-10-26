@@ -39,19 +39,19 @@ function KoaOAuthServer(options) {
 KoaOAuthServer.prototype.authenticate = function() {
   var server = this.server;
 
-  return function *(next) {
-    var request = new Request(this.request);
+  return co.wrap(function *(ctx, next) {
+    var request = new Request(ctx.request);
 
     try {
-      this.state.oauth = {
+      ctx.state.oauth = {
         token: yield server.authenticate(request)
       };
     } catch (e) {
-      return handleError.call(this, e);
+      return handleError.call(ctx, e);
     }
 
     yield* next;
-  };
+  });
 };
 
 /**
@@ -65,22 +65,22 @@ KoaOAuthServer.prototype.authenticate = function() {
 KoaOAuthServer.prototype.authorize = function() {
   var server = this.server;
 
-  return function *(next) {
-    var request = new Request(this.request);
-    var response = new Response(this.response);
+  return co.wrap(function *(ctx, next) {
+    var request = new Request(ctx.request);
+    var response = new Response(ctx.response);
 
     try {
-      this.state.oauth = {
+      ctx.state.oauth = {
         code: yield server.authorize(request, response)
       };
 
-      handleResponse.call(this, response);
+      handleResponse.call(ctx, response);
     } catch (e) {
-      return handleError.call(this, e, response);
+      return handleError.call(ctx, e, response);
     }
 
     yield* next;
-  };
+  });
 };
 
 /**
@@ -94,22 +94,22 @@ KoaOAuthServer.prototype.authorize = function() {
 KoaOAuthServer.prototype.token = function() {
   var server = this.server;
 
-  return function *(next) {
-    var request = new Request(this.request);
-    var response = new Response(this.response);
+  return co.wrap(function *(ctx, next) {
+    var request = new Request(ctx.request);
+    var response = new Response(ctx.response);
 
     try {
-      this.state.oauth = {
+      ctx.state.oauth = {
         token: yield server.token(request, response)
       };
 
-      handleResponse.call(this, response);
+      handleResponse.call(ctx, response);
     } catch (e) {
-      return handleError.call(this, e, response);
+      return handleError.call(ctx, e, response);
     }
 
     yield* next;
-  };
+  });
 };
 
 /**
