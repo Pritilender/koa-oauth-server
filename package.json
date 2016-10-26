@@ -23,7 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "co": "^4.5.1",
-    "oauth2-server": "seegno-forks/node-oauth2-server#enhancement/refactor-project"
+    "oauth2-server": "git@github.com:pschwyter/node-oauth2-server#enhancement/refactor-project"
   },
   "devDependencies": {
     "co-mocha": "^1.1.0",
