@@ -41,16 +41,17 @@ KoaOAuthServer.prototype.authenticate = function() {
 
   return co.wrap(function *(ctx, next) {
     var request = new Request(ctx.request);
+    var response = new Response(ctx.response);
 
     try {
       ctx.state.oauth = {
-        token: yield server.authenticate(request)
+        token: yield server.authenticate(request, response)
       };
     } catch (e) {
       return handleError.call(ctx, e);
     }
 
-    yield* next;
+    yield next();
   });
 };
 
@@ -79,7 +80,7 @@ KoaOAuthServer.prototype.authorize = function() {
       return handleError.call(ctx, e, response);
     }
 
-    yield* next;
+    yield next();
   });
 };
 
@@ -108,7 +109,7 @@ KoaOAuthServer.prototype.token = function() {
       return handleError.call(ctx, e, response);
     }
 
-    yield* next;
+    yield next();
   });
 };
 
