@@ -48,6 +48,9 @@ KoaOAuthServer.prototype.authenticate = function() {
         token: yield server.authenticate(request, response)
       };
     } catch (e) {
+      if (server.passThroughErrors)
+        throw e;
+
       return handleError.call(ctx, e);
     }
 
@@ -77,6 +80,9 @@ KoaOAuthServer.prototype.authorize = function() {
 
       handleResponse.call(ctx, response);
     } catch (e) {
+      if (server.passThroughErrors)
+        throw e;
+
       return handleError.call(ctx, e, response);
     }
 
@@ -106,6 +112,9 @@ KoaOAuthServer.prototype.token = function() {
 
       handleResponse.call(ctx, response);
     } catch (e) {
+      if (server.passThroughErrors)
+        throw e;
+
       return handleError.call(ctx, e, response);
     }
 
