@@ -1,5 +1,5 @@
 {
-  "name": "koa-oauth-server",
+  "name": "@turnstyle/koa-oauth-server",
   "description": "OAuth provider for koa",
   "version": "2.0.0",
   "main": "index.js",
