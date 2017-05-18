@@ -24,7 +24,7 @@
   "dependencies": {
     "bluebird": "^3.4.6",
     "koa-convert": "^1.2.0",
-    "oauth2-server": "^3.0.0-b3.1"
+    "oauth2-server": "https://github.com/Pritilender/node-oauth2-server/"
   },
   "devDependencies": {
     "mocha": "^2.0.1",
