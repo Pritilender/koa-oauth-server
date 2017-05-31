@@ -33,9 +33,10 @@ function KoaOAuthServer(options) {
  * (See: https://tools.ietf.org/html/rfc6749#section-7)
  */
 
-KoaOAuthServer.prototype.authenticate = function() {
+KoaOAuthServer.prototype.authenticate = function(opts) {
 
   var server = this.server;
+  const options = opts || {};
 
   return function (ctx, next) {
 
@@ -43,8 +44,7 @@ KoaOAuthServer.prototype.authenticate = function() {
     var response = new Response(ctx.response);
     var authenticate = Promise.promisify(server.authenticate, { context: server });
 
-    // pass `null` for 3rd argument as NodeOAuthServer#authenticate expects callback as 4th argument
-    return authenticate(request, response, null)
+    return authenticate(request, response, options)
       .then(function (token) {
 
         ctx.state.oauth = {
